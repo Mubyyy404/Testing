@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>XSS Demonstration Page</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6fa; padding: 2rem; }
+    .container { max-width: 600px; margin:auto; background:#fff; padding:2rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+    input[type=text] { width:80%; padding:0.5rem; border:1px solid #aaa; border-radius:4px; }
+    button { padding:0.5rem 1rem; margin-left:0.5rem; }
+    #output { margin-top:1rem; padding:1rem; border:1px solid #ddd; min-height:2rem; border-radius:4px; background:#fafafa; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>XSS Vulnerable Demo</h1>
+    <p>Enter text (try <code>&lt;script&gt;alert('xss')&lt;/script&gt;</code>)</p>
+
+    <form method="GET">
+      <input type="text" name="msg" placeholder="Type something...">
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="output">
+      <!-- Reflected output will appear here -->
+      <script>
+        const params = new URLSearchParams(window.location.search);
+        const msg = params.get("msg");
+        if (msg) {
+          // ❌ Vulnerable: directly writing unescaped user input to page
+          document.write("<p>You entered: " + msg + "</p>");
+        }
+      </script>
+    </div>
+  </div>
+</body>
+</html>
