@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Cyber Blog – DOM XSS Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; background:#f5f6fa; margin:0; padding:0; }
+    header { background:#2d3436; color:white; padding:1rem 2rem; }
+    header h1 { margin:0; font-size:1.5rem; }
+    nav { margin-top:0.5rem; }
+    nav a { color:#dfe6e9; margin-right:1rem; text-decoration:none; }
+    nav a:hover { text-decoration:underline; }
+    .container { max-width:900px; margin:2rem auto; background:white; padding:2rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+    h2 { margin-top:0; }
+    .search-box { margin:1rem 0; }
+    .search-box input { width:70%; padding:0.5rem; border-radius:4px; border:1px solid #aaa; }
+    .search-box button { padding:0.5rem 1rem; border:none; border-radius:4px; background:#0984e3; color:white; cursor:pointer; }
+    .search-box button:hover { background:#74b9ff; }
+    #results { margin-top:1rem; padding:1rem; border:1px solid #ccc; border-radius:6px; background:#f9f9f9; min-height:2rem; }
+    footer { text-align:center; padding:1rem; margin-top:2rem; background:#dfe6e9; }
+    .hint { font-size:0.85rem; color:#636e72; margin-top:0.5rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Cyber Blog</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Articles</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Welcome to Cyber Blog</h2>
+    <p>This is a demo article page designed for cybersecurity training. The search feature below has an intentional DOM XSS vulnerability for demonstration purposes.</p>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search articles..." />
+      <button id="searchBtn">Search</button>
+    </div>
+
+    <div id="results">Search results will appear here.</div>
+    <div class="hint">💡 Try typing normal text first, then try a payload like: <code>&lt;img src=x onerror="alert('DOM XSS')"&gt;</code></div>
+  </div>
+
+  <footer>
+    <p>© 2025 Cyber Blog – For Training Use Only</p>
+  </footer>
+
+  <script>
+    document.getElementById("searchBtn").addEventListener("click", function() {
+      const query = document.getElementById("searchInput").value;
+      const resultsDiv = document.getElementById("results");
+
+      // ❌ VULNERABLE: directly injecting user input into the page
+      resultsDiv.innerHTML = "Results for: " + query;
+    });
+
+    // Bonus: if URL contains ?q=payload, it will auto-fill and render it
+    const params = new URLSearchParams(location.search);
+    if (params.get("q")) {
+      document.getElementById("searchInput").value = params.get("q");
+      document.getElementById("results").innerHTML = "Results for: " + params.get("q");
+    }
+  </script>
+</body>
+</html>
